@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.xiaowen.demo.service.UrlConverterService;
 
 @RestController
-@RequestMapping(path="/api")
+@RequestMapping(path = "/api")
 public class UrlConverterEndpoint {
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private UrlConverterService urlSvc;
-	
+
 	@Autowired
 	public UrlConverterEndpoint(UrlConverterService urlSvc) {
 		super();
@@ -28,14 +28,14 @@ public class UrlConverterEndpoint {
 	public String hello() {
 		return "hello world";
 	}
-	
-	@PostMapping("")
+
+	@PostMapping("shrink")
 	public String getShortenedUrl(@RequestBody String url) {
 		logger.info("request to shorten {}", url);
 		return urlSvc.convertToShortUrl(url);
 	}
-	
-	@GetMapping("")
+
+	@PostMapping("expand")
 	public String getOriginalUrlFromShortened(@RequestBody String url) {
 		return urlSvc.getOriginalUrlFromShortened(url);
 	}

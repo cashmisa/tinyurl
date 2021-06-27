@@ -5,21 +5,27 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="url")
+@Table(name = "url")
 public class Url {
-	
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "url_seq")
+	@SequenceGenerator(name = "url_seq", sequenceName = "url_seq", initialValue = 100)
 	private long id;
-	
-	@Column(name="shortUrl")
-	private String shortUrl;
-	
-	@Column(name="longUrl")
+
+	@Column(name = "longUrl")
 	private String longUrl;
+
+	public Url() {
+	}
+
+	public Url(String longUrl) {
+		this.longUrl = longUrl;
+	}
 
 	public long getId() {
 		return id;
@@ -29,14 +35,6 @@ public class Url {
 		this.id = id;
 	}
 
-	public String getShortUrl() {
-		return shortUrl;
-	}
-
-	public void setShortUrl(String shortUrl) {
-		this.shortUrl = shortUrl;
-	}
-
 	public String getLongUrl() {
 		return longUrl;
 	}
@@ -44,6 +42,5 @@ public class Url {
 	public void setLongUrl(String longUrl) {
 		this.longUrl = longUrl;
 	}
-	
-	
+
 }
