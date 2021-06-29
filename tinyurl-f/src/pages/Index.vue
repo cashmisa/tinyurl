@@ -101,16 +101,7 @@ export default defineComponent({
     const reversal = ref(false);
     const url = ref(null);
     const urlRef = ref(null);
-    const requestedUrls = ref([
-      {
-        originalUrl: 'https://blog.gds-gov.tech/terragrunt-in-retro-i-would-have-done-these-few-things-e5aaac451942',
-        convertedUrl: 'http://localhost:8899/4P'
-      },
-      {
-        originalUrl: 'http://localhost:8899/4P',
-        convertedUrl: 'https://blog.gds-gov.tech/terragrunt-in-retro-i-would-have-done-these-few-things-e5aaac451942'
-      }
-    ]);
+    const requestedUrls = ref([]);
 
     async function convertUrl() {
       if (!url.value) {
