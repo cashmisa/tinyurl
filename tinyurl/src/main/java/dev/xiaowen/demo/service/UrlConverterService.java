@@ -3,6 +3,7 @@ package dev.xiaowen.demo.service;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.SecureRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +17,11 @@ public class UrlConverterService {
 
 	public static final String BASE_URL_STRING = "http://localhost:8899/";
 	public static final int URL_CODE_LENGTH = 6;
+	private static final int RANDOM_INDEX_FIRST = 0;
+	private static final int RANDOM_INDEX_SECOND = 3; // initial value is 100, code min length is 2
 	private static final String CODE_STRING = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private int base = CODE_STRING.length();
+	private SecureRandom rnd = new SecureRandom();
 	private UrlConverterRepo urlRepo;
 
 	@Autowired
@@ -70,10 +74,14 @@ public class UrlConverterService {
 			sBuilder.insert(0, CODE_STRING.charAt(index));
 			num /= base;
 		}
+		sBuilder.insert(RANDOM_INDEX_FIRST, CODE_STRING.charAt(rnd.nextInt(base)));
+		sBuilder.insert(RANDOM_INDEX_SECOND, CODE_STRING.charAt(rnd.nextInt(base)));
 		return sBuilder.toString();
 	}
 
 	private long decodeCodeToLongId(String code) {
+		code = code.substring(0, RANDOM_INDEX_FIRST) + code.substring(RANDOM_INDEX_FIRST + 1, RANDOM_INDEX_SECOND)
+				+ code.substring(RANDOM_INDEX_SECOND + 1);
 		long decoded = 0;
 		for (int i = 0; i < code.length(); i++) {
 			decoded = decoded * base + CODE_STRING.indexOf(code.charAt(i));
