@@ -16,7 +16,7 @@ public class UrlConverterService {
 
 	public static final String BASE_URL_STRING = "http://localhost:8899/";
 	public static final int URL_CODE_LENGTH = 6;
-	private static final String CODE_STRING = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ*";
+	private static final String CODE_STRING = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private int base = CODE_STRING.length();
 	private UrlConverterRepo urlRepo;
 

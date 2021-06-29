@@ -17,7 +17,7 @@ public class Url {
 	@SequenceGenerator(name = "url_seq", sequenceName = "url_seq", initialValue = 100)
 	private long id;
 
-	@Column(name = "longUrl")
+	@Column(name = "longUrl", length = 2083)
 	private String longUrl;
 
 	public Url() {
