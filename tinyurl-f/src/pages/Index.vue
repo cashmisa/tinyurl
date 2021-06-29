@@ -1,21 +1,18 @@
 <template>
   <q-page padding class="main-background flex flex-center column">
-    <q-toggle
+    <q-btn-toggle
       v-model="reversal"
-      size="xl"
-      checked-icon="undo"
-      color="red"
-      :label="
-        reversal
-          ? 'I want to shorten a long url'
-          : 'I want to bring back the long url'
-      "
-      unchecked-icon="redo"
+      toggle-color="accent"
+      rounded
+      :options="[
+        { label: 'shorten', value: false },
+        { label: 'turn back', value: true },
+      ]"
     />
     <h4>
       {{
         reversal
-          ? "Enter the shortened Url to turn it back"
+          ? "Enter the shortened URL to turn it back"
           : "Enter a long URL to shorten"
       }}
     </h4>
@@ -23,22 +20,24 @@
       <q-input
         ref="urlRef"
         rounded
+        clearable
         class="col-grow self-center q-mr-md"
-        :placeholder="
+        :hint="
           reversal
-            ? 'http://localhost:8080/qwe123'
-            : 'https://example.com/loooooooooong'
+            ? 'starts with http://localhost:8080/qwe123'
+            : 'e.g. https://example.com/loooooooooong'
         "
         standout="bg-grey-5 text-black"
         type="url"
         v-model="url"
         lazy-rules
-        :rules="[isValidUrl || 'Must be a valid url']"
+        :rules="[isValidUrl || 'Must be a valid URL']"
+        @keyup.enter="convertUrl"
         @update:model-value="reset"
       ></q-input>
       <div class="col-shrink">
         <q-btn
-          color="secondary"
+          :color="reversal ? 'warning' : 'secondary'"
           size="lg"
           rounded
           :label="reversal ? 'Original' : 'Shorten'"
@@ -46,11 +45,16 @@
         ></q-btn>
       </div>
     </div>
-    <div class="self-end q-mt-md">
-      <q-btn v-if="requestedUrls.length > 0" flat size="sm" @click="clearHistory">Clear history</q-btn>
+    <div class="self-start q-mt-md">
+      <q-btn
+        v-if="requestedUrls.length > 0"
+        flat
+        size="sm"
+        @click="clearHistory"
+        >Clear history</q-btn
+      >
     </div>
     <q-list
-      bordered
       separator
       class="bg-grey-5 full-width"
       v-if="requestedUrls.length > 0"
@@ -64,10 +68,20 @@
           <q-item-label lines="5">{{ u.convertedUrl }}</q-item-label>
           <q-item-label caption lines="1">{{ u.originalUrl }}</q-item-label>
         </q-item-section>
-        <q-item-section side>
+        <!-- <q-item-section side>
           <q-btn name="copy" flat color="primary" @click="copy(u.convertedUrl)"
             >copy</q-btn
           >
+        </q-item-section> -->
+        <q-item-section top side>
+          <div class="text-grey-8 q-gutter-xs">
+            <q-btn class="gt-xs" size="12px" flat dense round icon="content_copy"  color="primary" @click="copy(u.convertedUrl)">
+              <q-tooltip>copy to clipboard</q-tooltip>
+            </q-btn>
+            <q-btn class="gt-xs" size="12px" flat dense round icon="open_in_new" color="primary" @click="openURL(u.convertedUrl)">
+              <q-tooltip>open in new tab</q-tooltip>
+            </q-btn>
+          </div>
         </q-item-section>
       </q-item>
     </q-list>
@@ -78,7 +92,7 @@
 import { defineComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import { post } from "axios";
-import { copyToClipboard } from "quasar";
+import { copyToClipboard, openURL } from "quasar";
 
 export default defineComponent({
   name: "PageIndex",
@@ -87,24 +101,39 @@ export default defineComponent({
     const reversal = ref(false);
     const url = ref(null);
     const urlRef = ref(null);
-    const requestedUrls = ref([]);
+    const requestedUrls = ref([
+      {
+        originalUrl: 'https://blog.gds-gov.tech/terragrunt-in-retro-i-would-have-done-these-few-things-e5aaac451942',
+        convertedUrl: 'http://localhost:8899/4P'
+      },
+      {
+        originalUrl: 'http://localhost:8899/4P',
+        convertedUrl: 'https://blog.gds-gov.tech/terragrunt-in-retro-i-would-have-done-these-few-things-e5aaac451942'
+      }
+    ]);
 
     async function convertUrl() {
+      if (!url.value) {
+        $q.notify({
+          type: "negative",
+          message: "Oops, there is no URL to convert",
+        });
+        return
+      }
       urlRef.value.validate();
       if (urlRef.value.hasError) {
         $q.notify({
           type: "negative",
-          message: "Please check your url before submit",
+          message: "Please check your URL before submit",
         });
       } else {
         let res;
         if (reversal.value) {
-          res = await post("/api/expand", encodeURI(url.value));
+          res = await post("/turnback", { url: url.value});
         } else {
-          res = await post("/api/shrink", encodeURI(url.value));
+          res = await post("/shorten", { url: url.value});
         }
         await copy(res.data);
-        requestedUrls.value.forEach((u) => (u.copied = false));
         requestedUrls.value.unshift({
           originalUrl: url.value,
           convertedUrl: res.data,
@@ -125,6 +154,7 @@ export default defineComponent({
     }
 
     function isValidUrl(val) {
+      if (!val) return true
       let link;
       try {
         link = new URL(val);
@@ -150,6 +180,7 @@ export default defineComponent({
       requestedUrls,
       convertUrl,
       clearHistory,
+      openURL
     };
   },
 });

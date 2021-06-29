@@ -11,7 +11,7 @@ import { Notify } from 'quasar'
 const api = axios.create()
 axios.defaults.baseURL = process.env.NODE_ENV !== 'production' ? '/dev' : ''
 axios.interceptors.request.use(config => {
-  config.headers['Content-Type'] = 'text/plain'
+  config.headers['Content-Type'] = 'application/json'
   return config
 })
 axios.interceptors.response.use(response => response, error => {
