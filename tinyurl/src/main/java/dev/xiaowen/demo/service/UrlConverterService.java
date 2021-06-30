@@ -39,16 +39,12 @@ public class UrlConverterService {
 	}
 
 	public String getOriginalUrlFromShortened(String shortUrl) {
-		System.out.println("shortUrl is: " + shortUrl);
 		if (!isValidUrl(shortUrl)) {
 			throw new InvalidLinkException("Not a valid url");
 		}
-		System.out.println("is valid");
 		if (!shortUrl.startsWith(BASE_URL_STRING)) {
-			System.out.println("Not start with base");
 			throw new InvalidLinkException("URL provided does not belong to us...");
 		}
-		System.out.println("starts with base");
 		String code = shortUrl.substring(BASE_URL_STRING.length());
 		return getOriginalUrlFromCode(code);
 	}

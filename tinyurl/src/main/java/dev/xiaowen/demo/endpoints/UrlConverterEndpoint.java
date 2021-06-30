@@ -31,22 +31,17 @@ public class UrlConverterEndpoint {
 
 	@PostMapping("/shorten")
 	public String getShortenedUrl(@Valid @RequestBody UrlForm form) {
-		System.out.println("form" + form.getUrl());
 		return urlSvc.convertToShortUrl(form.getUrl());
 	}
 
 	@PostMapping("/turnback")
 	public String getOriginal(@Valid @RequestBody UrlForm form) {
-		System.out.println("form:" + form.getUrl());
 		return urlSvc.getOriginalUrlFromShortened(form.getUrl());
 	}
 
 	@GetMapping("/{code}")
 	public ResponseEntity<Object> redirectToOriginal(@PathVariable String code) {
-		System.out.println("pathVariable " + code);
 		String url = urlSvc.getOriginalUrlFromCode(code);
-		System.out.println(url);
-		System.out.println("created url is" + URI.create(url));
 		return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(url)).build();
 	}
 
