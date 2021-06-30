@@ -4,18 +4,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-public class InvalidLinkException extends RuntimeException {
+public class InvalidUrlException extends RuntimeException {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	String msg;
 
-	public InvalidLinkException() {
+	public InvalidUrlException() {
 		super();
 	}
 
-	public InvalidLinkException(String msg) {
+	public InvalidUrlException(String msg) {
 		super(msg);
 		this.msg = msg;
 	}

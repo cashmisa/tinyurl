@@ -19,16 +19,21 @@ import dev.xiaowen.demo.service.UrlConverterService;
 
 @RestController
 @RequestMapping(path = "")
-public class UrlConverterEndpoint {
+public class UrlConverterController {
 
 	private UrlConverterService urlSvc;
 
 	@Autowired
-	public UrlConverterEndpoint(UrlConverterService urlSvc) {
+	public UrlConverterController(UrlConverterService urlSvc) {
 		super();
 		this.urlSvc = urlSvc;
 	}
 
+	@GetMapping("/hello")
+	public String sayHello() {
+		return "hello back";
+	}
+	
 	@PostMapping("/shorten")
 	public String getShortenedUrl(@Valid @RequestBody UrlForm form) {
 		return urlSvc.convertToShortUrl(form.getUrl());
