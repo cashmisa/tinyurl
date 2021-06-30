@@ -31,7 +31,7 @@ axios.interceptors.response.use(response => response, error => {
   Notify.create({
     type: 'negative',
     message: error.response.data.message || msg,
-    timeout: 500
+    timeout: 2000
   })
   return Promise.reject(error.response)
 })
