@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.xiaowen.demo.data.Url;
-import dev.xiaowen.demo.exception.InvalidLinkException;
+import dev.xiaowen.demo.exception.InvalidUrlException;
 import dev.xiaowen.demo.repo.UrlConverterRepo;
 
 @Service
@@ -18,7 +18,7 @@ public class UrlConverterService {
 	public static final String BASE_URL_STRING = "http://localhost:8899/";
 	public static final int URL_CODE_LENGTH = 6;
 	private static final int RANDOM_INDEX_FIRST = 0;
-	private static final int RANDOM_INDEX_SECOND = 3; // initial value is 100, code min length is 2
+	private static final int RANDOM_INDEX_SECOND = 3; // initial value is 100 so code minLength is 2
 	private static final String CODE_STRING = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	private int base = CODE_STRING.length();
 	private SecureRandom rnd = new SecureRandom();
@@ -31,7 +31,7 @@ public class UrlConverterService {
 
 	public String convertToShortUrl(String longUrl) {
 		if (!isValidUrl(longUrl)) {
-			throw new InvalidLinkException("Not a valid url");
+			throw new InvalidUrlException("Not a valid url. ");
 		}
 		Url saved = urlRepo.save(new Url(longUrl));
 		String code = encodeLongIdToCode(saved.getId());
@@ -40,16 +40,25 @@ public class UrlConverterService {
 
 	public String getOriginalUrlFromShortened(String shortUrl) {
 		if (!isValidUrl(shortUrl)) {
-			throw new InvalidLinkException("Not a valid url");
+			throw new InvalidUrlException("Not a valid url");
 		}
 		if (!shortUrl.startsWith(BASE_URL_STRING)) {
-			throw new InvalidLinkException("URL provided does not belong to us...");
+			throw new InvalidUrlException("URL provided does not belong to us...");
 		}
 		String code = shortUrl.substring(BASE_URL_STRING.length());
 		return getOriginalUrlFromCode(code);
 	}
 
-	public Boolean isValidUrl(String url) {
+	public String getOriginalUrlFromCode(String code) {
+		long id = decodeCodeToLongId(code);
+		Url found = urlRepo.findById(id).orElse(null);
+		if (found == null) {
+			throw new InvalidUrlException("Unable to find site's URL to redirect to.");
+		}
+		return found.getLongUrl();
+	}
+
+	private Boolean isValidUrl(String url) {
 		try {
 			new URL(url).toURI();
 			return true;
@@ -57,16 +66,7 @@ public class UrlConverterService {
 			return false;
 		}
 	}
-
-	public String getOriginalUrlFromCode(String code) {
-		long id = decodeCodeToLongId(code);
-		Url found = urlRepo.findById(id).orElse(null);
-		if (found == null) {
-			throw new InvalidLinkException("Unable to find site's URL to redirect to.");
-		}
-		return found.getLongUrl();
-	}
-
+	
 	private String encodeLongIdToCode(long num) {
 		StringBuilder sBuilder = new StringBuilder();
 		while (num > 0) {
