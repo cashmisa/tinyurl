@@ -119,17 +119,20 @@ export default defineComponent({
         });
       } else {
         let res;
-        if (reversal.value) {
-          res = await post("/turnback", { url: url.value});
-        } else {
-          res = await post("/shorten", { url: url.value});
+        try {
+          if (reversal.value) {
+            res = await post("/turnback", { url: url.value});
+          } else {
+            res = await post("/shorten", { url: url.value});
+          }
+          await copy(res.data);
+          requestedUrls.value.unshift({
+            originalUrl: url.value,
+            convertedUrl: res.data,
+          });
+          url.value = null;
+        } catch (err) {
         }
-        await copy(res.data);
-        requestedUrls.value.unshift({
-          originalUrl: url.value,
-          convertedUrl: res.data,
-        });
-        url.value = null;
       }
     }
 

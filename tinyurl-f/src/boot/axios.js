@@ -16,14 +16,21 @@ axios.interceptors.request.use(config => {
 })
 axios.interceptors.response.use(response => response, error => {
   const originalReq = error.config
-  console.log('error', error)
   // in dev mode, 401 returns /dev/endpoint and /dev is concatinated again making url /dev/dev/endpoint
   if (process.env.NODE_ENV !== 'production') {
     originalReq.url = originalReq.url.replace(/^\/dev/, '')
   }
+
+  // temperary fix due to web config in java
+  // backend runtime exceptions not throw, instead, all return 405
+  let msg = 'Error occured. '
+  if (error.response.status === 405) {
+    msg += 'URL not valid.'
+  }
+
   Notify.create({
     type: 'negative',
-    message: error.response.data.message,
+    message: error.response.data.message || msg,
     timeout: 500
   })
   return Promise.reject(error.response)
