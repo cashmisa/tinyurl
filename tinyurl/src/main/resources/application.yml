@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/tinyurl?serverTimezone=UTC
-    username: springUser
-    password: ThePassword
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:tinyurl}?serverTimezone=UTC
+    username: ${DB_USERNAME:springUser}
+    password: ${DB_PASSWORD:ThePassword}
     driver-class-name: com.mysql.cj.jdbc.Driver
     
   jpa:

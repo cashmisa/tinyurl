@@ -4,8 +4,6 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +21,6 @@ import dev.xiaowen.demo.service.UrlConverterService;
 @RequestMapping(path = "")
 public class UrlConverterEndpoint {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
 	private UrlConverterService urlSvc;
 
 	@Autowired
