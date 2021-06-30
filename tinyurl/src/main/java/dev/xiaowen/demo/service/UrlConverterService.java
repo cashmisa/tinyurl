@@ -16,7 +16,7 @@ import dev.xiaowen.demo.repo.UrlConverterRepo;
 public class UrlConverterService {
 
 	public static final String BASE_URL_STRING = "http://localhost:8899/";
-	public static final int URL_CODE_LENGTH = 6;
+	private static final int MIN_FINAL_CODE_LENGTH = 4;
 	private static final int RANDOM_INDEX_FIRST = 0;
 	private static final int RANDOM_INDEX_SECOND = 3; // initial value is 100 so code minLength is 2
 	private static final String CODE_STRING = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -31,7 +31,7 @@ public class UrlConverterService {
 
 	public String convertToShortUrl(String longUrl) {
 		if (!isValidUrl(longUrl)) {
-			throw new InvalidUrlException("Not a valid url. ");
+			throw new InvalidUrlException("Not a valid URL. ");
 		}
 		Url saved = urlRepo.save(new Url(longUrl));
 		String code = encodeLongIdToCode(saved.getId());
@@ -40,12 +40,15 @@ public class UrlConverterService {
 
 	public String getOriginalUrlFromShortened(String shortUrl) {
 		if (!isValidUrl(shortUrl)) {
-			throw new InvalidUrlException("Not a valid url");
+			throw new InvalidUrlException("Not a valid URL");
 		}
 		if (!shortUrl.startsWith(BASE_URL_STRING)) {
 			throw new InvalidUrlException("URL provided does not belong to us...");
 		}
 		String code = shortUrl.substring(BASE_URL_STRING.length());
+		if (code.length() < MIN_FINAL_CODE_LENGTH) {
+			throw new InvalidUrlException("Unable to find site's URL to redirect to.");
+		}
 		return getOriginalUrlFromCode(code);
 	}
 
