@@ -9,7 +9,7 @@
         { label: 'turn back', value: true },
       ]"
     />
-    <h4>
+    <h4 class="text-weight-bolder text-grey-9">
       {{
         reversal
           ? "Enter the shortened URL to turn it back"
