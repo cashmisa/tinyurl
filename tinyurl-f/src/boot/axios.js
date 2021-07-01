@@ -21,13 +21,6 @@ axios.interceptors.response.use(response => response, error => {
     originalReq.url = originalReq.url.replace(/^\/dev/, '')
   }
 
-  // temperary fix due to web config in java
-  // backend runtime exceptions not throw, instead, all return 405
-  let msg = 'Error occured. '
-  if (error.response.status === 405) {
-    msg += 'URL not valid.'
-  }
-
   Notify.create({
     type: 'negative',
     message: error.response.data.message || msg,
