@@ -10,11 +10,13 @@
       ]"
     />
     <h4 class="text-weight-bolder text-grey-9">
+      <q-icon :name="reversal ? 'unfold_more' : 'unfold_less'" :class="reversal ? 'text-secondary' : 'text-warning'"></q-icon>
       {{
         reversal
           ? "Enter the shortened URL to turn it back"
           : "Enter a long URL to shorten"
       }}
+      <q-icon :name="reversal ? 'unfold_more' : 'unfold_less'" :class="reversal ? 'text-secondary' : 'text-warning'"></q-icon>
     </h4>
     <div class="full-width row wrap justify-center">
       <q-input
